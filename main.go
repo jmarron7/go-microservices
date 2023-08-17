@@ -15,13 +15,14 @@ func main() {
 
 	l := log.New(os.Stdout, "product-api", log.LstdFlags)
 
-	hh := handlers.NewHello(l)
-	gh := handlers.NewGoodbye(l)
+	// create the handlers
+	ph := handlers.NewProducts(l)
 
+	// create the new serve mux and register handlers
 	sm := http.NewServeMux()
-	sm.Handle("/", hh)
-	sm.Handle("/goodbye", gh)
+	sm.Handle("/", ph)
 
+	// create new server
 	s := &http.Server{
 		Addr:         ":9090",
 		Handler:      sm,
@@ -30,6 +31,7 @@ func main() {
 		WriteTimeout: 1 * time.Second,
 	}
 
+	// start the server
 	go func() {
 		err := s.ListenAndServe()
 		if err != nil {
