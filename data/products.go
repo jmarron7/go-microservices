@@ -17,6 +17,11 @@ type Product struct {
 	DeletedOn   string  `json:"-"`
 }
 
+func (p *Product) FromJSON(r io.Reader) error {
+	e := json.NewDecoder(r)
+	return e.Decode(p)
+}
+
 type Products []*Product
 
 func (p *Products) ToJSON(w io.Writer) error {
@@ -35,7 +40,7 @@ var productList = []*Product{
 		UpdatedOn:   time.Now().UTC().String(),
 	},
 	&Product{
-		ID:          1,
+		ID:          2,
 		Name:        "Espresso",
 		Description: "Short and strong coffee with no milk",
 		Price:       1.99,
@@ -47,4 +52,14 @@ var productList = []*Product{
 
 func GetProducts() Products {
 	return productList
+}
+
+func AddProduct(p *Product) {
+	p.ID = getNextID()
+	productList = append(productList, p)
+}
+
+func getNextID() int {
+	lp := productList[len(productList)-1]
+	return lp.ID + 1
 }
